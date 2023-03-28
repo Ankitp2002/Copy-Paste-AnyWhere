@@ -1,0 +1,18 @@
+
+Create .Exe File
+
+
+>pyinstaller --add-data "fileData_ui.py;." --add-data "login_ui.py;." --add-data "home_ui.py;." --add-dat
+>a "profile_ui.py;." --add-data "signup_ui.py;." --hidden-import=requests --hidden-import=PyQt5 --hidden-import=json --hidden-import=sys --hidden-import=time --hidden-import=os --onefi
+le --noconsole application.py --icon=CopyIco.ico
+
+
+add this in .spec file which is create when you creat .exe file
+
+Root: HKCR; Subkey: "*\shell\{#MyAppName}"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Tasks: addContextMenu
+Root: HKCR; Subkey: "*\shell\{#MyAppName}\command"; ValueType: string; ValueName: ""; ValueData: """{app}\{#MyAppExeName}"" ""%1"""; Flags: uninsdeletevalue;Tasks: addContextMenu
+
+
+
+Name: "addContextMenu"; Description: "Add context menu entry"; GroupDescription: "Additional options"; Flags: unchecked
+
