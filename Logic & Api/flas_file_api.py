@@ -123,97 +123,105 @@ class fileGet(Resource):
             return make_response(jsonify({"responce":"Invalid Token or Token Is not Givern "}))
 
         else:
+            try:
 
-            getDb = Session.query(FileOpration.fileName).filter(FileOpration.token == token).first()
+                getDb = Session.query(FileOpration.fileName).filter(FileOpration.token == token).first()
 
-            temp=getDb[0].split('.')
+                if getDb is None:
+                    return make_response(jsonify("token is invalide"))
+                else:
 
-            fielsData = []
+                    temp=getDb[0].split('.')
 
-            if temp[1] == "tar" :
+                    fielsData = []
 
-                from multipleFileGet import multipleFileGet
-    
-                responce = make_response("")
-                responce.headers['file'] = multipleFileGet(token,decodeToken)
-                return responce
+                    if temp[1] == "tar" :
 
-    # ==================================multiple file get====================================
+                        from multipleFileGet import multipleFileGet
 
-                #
-                # data = tarfile.open(f'uploadFile/{token}.tar.gz','r')
-                #
-                # for value in data.getnames():
-                #
-                #     data.extract(path='E:/script_all_dna/Professional_codeing_practice/copyPasteApiFlask/ankit',member=value , numeric_owner=True)
-                #
-                #     temp = value.split('.')
-                #
-                #     encryptFileName = ".".join(temp[:-1])
-                #
-                #     # ====================================unzip file================================
-                #
-                #     with gzip.open(value, 'rb') as decommpostFile:
-                #
-                #         with open(encryptFileName, 'wb') as encryptFile:
-                #
-                #             shutil.copyfileobj(decommpostFile, encryptFile)
-                #
-                #      #==========================remove gz file ==========================
-                #
-                #     os.remove(value)
-                #
-                #     # ----------------------------decription-----------------------------------------
-                #
-                #     key = Fernet(b'Tvo-DHOLOxFvRpEZwvtu1eUt3L5seBuE6yfapa2W5dA=')
-                #
-                #     with open( encryptFileName , 'rb') as decryptFile:
-                #
-                #         decryptdata = decryptFile.read()
-                #
-                #     decryptedFile = key.decrypt(decryptdata)
-                #
-                #     # ==========================remove encript file ===============
-                #
-                #     os.remove(encryptFileName)
-                #
-                #     # ===============================orignalFile ========================
-                #
-                #     with open(encryptFileName, 'wb') as finalFile:
-                #
-                #         orignalData = finalFile.write(decryptedFile)
-                #
-                #     # ---------------------------------------------------------------------------
-                #     temp = encryptFileName.split('/')[1]
-                #
-                #     fielsData.append(temp)
-                #
-                # data.close()
-                #
-                # os.remove(f'uploadFile/{token}.tar.gz')
-                #
-                # dbStore = Session.query(FileOpration).filter(FileOpration.token == token).delete()
-                # Session.commit()
-                # Session.close()
-                #
-                # return fielsData
+                        responce = make_response("")
+                        responce.headers['file'] = multipleFileGet(token,decodeToken)
+                        return responce
 
-            else:
+            # ==================================multiple file get====================================
 
-                from getSingalFile import getSingalFiles
+                        #
+                        # data = tarfile.open(f'uploadFile/{token}.tar.gz','r')
+                        #
+                        # for value in data.getnames():
+                        #
+                        #     data.extract(path='E:/script_all_dna/Professional_codeing_practice/copyPasteApiFlask/ankit',member=value , numeric_owner=True)
+                        #
+                        #     temp = value.split('.')
+                        #
+                        #     encryptFileName = ".".join(temp[:-1])
+                        #
+                        #     # ====================================unzip file================================
+                        #
+                        #     with gzip.open(value, 'rb') as decommpostFile:
+                        #
+                        #         with open(encryptFileName, 'wb') as encryptFile:
+                        #
+                        #             shutil.copyfileobj(decommpostFile, encryptFile)
+                        #
+                        #      #==========================remove gz file ==========================
+                        #
+                        #     os.remove(value)
+                        #
+                        #     # ----------------------------decription-----------------------------------------
+                        #
+                        #     key = Fernet(b'Tvo-DHOLOxFvRpEZwvtu1eUt3L5seBuE6yfapa2W5dA=')
+                        #
+                        #     with open( encryptFileName , 'rb') as decryptFile:
+                        #
+                        #         decryptdata = decryptFile.read()
+                        #
+                        #     decryptedFile = key.decrypt(decryptdata)
+                        #
+                        #     # ==========================remove encript file ===============
+                        #
+                        #     os.remove(encryptFileName)
+                        #
+                        #     # ===============================orignalFile ========================
+                        #
+                        #     with open(encryptFileName, 'wb') as finalFile:
+                        #
+                        #         orignalData = finalFile.write(decryptedFile)
+                        #
+                        #     # ---------------------------------------------------------------------------
+                        #     temp = encryptFileName.split('/')[1]
+                        #
+                        #     fielsData.append(temp)
+                        #
+                        # data.close()
+                        #
+                        # os.remove(f'uploadFile/{token}.tar.gz')
+                        #
+                        # dbStore = Session.query(FileOpration).filter(FileOpration.token == token).delete()
+                        # Session.commit()
+                        # Session.close()
+                        #
+                        # return fielsData
 
-                fileData = temp[:-1]
+                    else:
 
-                encryptFileName = ".".join(fileData)
+                        from getSingalFile import getSingalFiles
 
-                data = getDb[0]
+                        fileData = temp[:-1]
 
-                fileSend = getSingalFiles(data,encryptFileName)
+                        encryptFileName = ".".join(fileData)
 
-                headerData = make_response(fileSend)
-                headerData.headers['fileName'] = encryptFileName
-                return headerData
+                        data = getDb[0]
 
+                        fileSend = getSingalFiles(data,encryptFileName)
+
+                        headerData = make_response(fileSend)
+                        headerData.headers['fileName'] = encryptFileName
+                        return headerData
+
+            except :
+
+                return make_response(jsonify("some this is wronge"))
 
     # ===============================Singal file get=========================================
     #             fileData = temp[:-1]
@@ -387,9 +395,7 @@ class multipleFileGet(Resource):
                 return responce
             except:
 
-                print("Data Not Available!")
-
-                pass
+                 make_response(jsonify("Data Not Available!"))
 
 @app.route('/filesDelete/<string:fileName>',methods=['GET'])
 def delete_file(fileName):
@@ -488,6 +494,6 @@ api.add_resource(UserFile,'/UserFile')
 
 if __name__ == '__main__':
     
-    app.run(host='192.168.1.126',port='3000',debug=True)
+    # app.run(host='',port='3000',debug=True)
     
-    # app.run(debug=True  )
+    app.run(debug=True  )
